@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 2rem;
+  }
+  .container {
+    display: flex;
+    gap: 2rem;
+  }
+  #userListContainer {
+    flex: 3;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  #userFormContainer {
+    flex: 2;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  h2 {
+    color: #333;
+    margin-top: 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #4285F4;
+    color: white;
+  }
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  tbody tr:hover {
+    background-color: #ddd;
+    cursor: pointer;
+  }
+  form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #555;
+  }
+  form input[type="text"],
+  form input[type="number"],
+  form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+  #registerBtn {
+    background-color: #4285F4;
+  }
+  #editBtn {
+    background-color: #f2a60f;
+  }
+  #deleteBtn {
+    background-color: #d96570;
+  }
+  #cancelBtn {
+    background-color: #6c757d;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="userListContainer">
+    <h2>User List</h2>
+    <table id="customerTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Weight</th>
+          <th>Gender</th>
+          <th>Registration Date</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="userFormContainer">
+    <h2>User Details</h2>
+    <form id="userForm">
+      <input type="hidden" id="userId">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name">
+      <label for="age">Age:</label>
+      <input type="number" id="age" name="age">
+      <label for="weight">Weight:</label>
+      <input type="number" id="weight" name="weight">
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender">
+        <option value="">Select...</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+      <div id="buttons">
+        <button type="button" id="registerBtn" class="btn">Register</button>
+        <button type="button" id="editBtn" class="btn" style="display:none;">Edit</button>
+        <button type="button" id="deleteBtn" class="btn" style="display:none;">Delete</button>
+        <button type="button" id="cancelBtn" class="btn" style="display:none;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="storage.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  loadUsers();
+  setupEventListeners();
+});
+
+function loadUsers() {
+  const users = getUsers();
+  const tableBody = document.getElementById('customerTable').getElementsByTagName('tbody')[0];
+  tableBody.innerHTML = ''; // Clear existing table data
+
+  users.forEach(userData => {
+    const row = tableBody.insertRow();
+    row.insertCell(0).textContent = userData.id;
+    row.insertCell(1).textContent = userData.name;
+    row.insertCell(2).textContent = userData.age;
+    row.insertCell(3).textContent = userData.weight;
+    row.insertCell(4).textContent = userData.gender;
+    row.insertCell(5).textContent = new Date(userData.registrationDate).toLocaleDateString();
+
+    row.addEventListener('click', () => {
+      populateForm(userData);
+    });
+  });
+}
+
+function populateForm(userData) {
+  document.getElementById('userId').value = userData.id;
+  document.getElementById('name').value = userData.name;
+  document.getElementById('age').value = userData.age;
+  document.getElementById('weight').value = userData.weight;
+  document.getElementById('gender').value = userData.gender;
+
+  document.getElementById('registerBtn').style.display = 'none';
+  document.getElementById('editBtn').style.display = 'inline-block';
+  document.getElementById('deleteBtn').style.display = 'inline-block';
+  document.getElementById('cancelBtn').style.display = 'inline-block';
+}
+
+function clearForm() {
+  document.getElementById('userForm').reset();
+  document.getElementById('userId').value = '';
+  document.getElementById('registerBtn').style.display = 'inline-block';
+  document.getElementById('editBtn').style.display = 'none';
+  document.getElementById('deleteBtn').style.display = 'none';
+  document.getElementById('cancelBtn').style.display = 'none';
+}
+
+function setupEventListeners() {
+  document.getElementById('registerBtn').addEventListener('click', () => {
+    const name = document.getElementById('name').value;
+    const age = document.getElementById('age').value;
+    const weight = document.getElementById('weight').value;
+    const gender = document.getElementById('gender').value;
+
+    if (name && age && weight && gender) {
+      const userData = {
+        id: getNextId(),
+        name: name,
+        age: parseInt(age),
+        weight: parseInt(weight),
+        gender: gender,
+        registrationDate: new Date().toISOString()
+      };
+      saveUser(userData);
+      loadUsers();
+      clearForm();
+    } else {
+      alert('Please fill out all fields.');
+    }
+  });
+
+  document.getElementById('editBtn').addEventListener('click', () => {
+    const userId = parseInt(document.getElementById('userId').value);
+    const name = document.getElementById('name').value;
+    const age = document.getElementById('age').value;
+    const weight = document.getElementById('weight').value;
+    const gender = document.getElementById('gender').value;
+
+    if (name && age && weight && gender) {
+      const updatedUserData = {
+        id: userId,
+        name: name,
+        age: parseInt(age),
+        weight: parseInt(weight),
+        gender: gender,
+        registrationDate: getUsers().find(user => user.id === userId).registrationDate
+      };
+      updateUser(updatedUserData);
+      loadUsers();
+      clearForm();
+    } else {
+      alert('Please fill out all fields.');
+    }
+  });
+
+  document.getElementById('deleteBtn').addEventListener('click', () => {
+    const userId = parseInt(document.getElementById('userId').value);
+    if (confirm('Are you sure you want to delete this user?')) {
+      deleteUser(userId);
+      loadUsers();
+      clearForm();
+    }
+  });
+
+  document.getElementById('cancelBtn').addEventListener('click', () => {
+    clearForm();
+  });
+}
+</script>
+
+</body>
+</html>

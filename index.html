@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Main Page</title>
+<style>
+  body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f2f5;
+  }
+  .logo {
+    font-size: 5rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #4285F4, #9b72cb, #d96570, #f2a60f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
+  }
+  .button-container {
+    display: flex;
+    gap: 1rem;
+  }
+  .btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+  }
+  .btn-1 {
+    background-color: #4285F4;
+  }
+  .btn-1:hover {
+    background-color: #3367D6;
+  }
+  .btn-2 {
+    background-color: #9b72cb;
+  }
+  .btn-2:hover {
+    background-color: #8155b4;
+  }
+  .btn-3 {
+    background-color: #d96570;
+  }
+  .btn-3:hover {
+    background-color: #c24d59;
+  }
+</style>
+</head>
+<body>
+
+<div class="logo">DUOFIT</div>
+
+<div class="button-container">
+  <a href="manage.html" class="btn btn-1">User Management (Style 1)</a>
+  <a href="manage.html" class="btn btn-2">User Management (Style 2)</a>
+  <a href="manage.html" class="btn btn-3">User Management (Style 3)</a>
+</div>
+
+</body>
+</html>
