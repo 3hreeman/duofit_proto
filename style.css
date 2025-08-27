@@ -1,28 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+    --primary-color: #0d6efd;
+    --dark-color: #1a1a1a;
+    --dark-secondary: #2c2c2c;
+    --light-color: #f8f9fa;
+    --text-color: #e0e0e0;
+    --border-color: #444;
+}
+
 body {
-    background-color: #f8f9fa;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--dark-color);
+    color: var(--text-color);
 }
 
 .navbar {
-    margin-bottom: 2rem;
+    background-color: var(--dark-secondary) !important;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--light-color);
+    text-decoration: none;
+}
+
+.logo .logo-fit {
+    color: var(--primary-color);
 }
 
 .main-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 100px);
+    min-height: 100vh;
+    padding: 2rem 0;
 }
 
-.mode-selection-card {
-    width: 100%;
-    max-width: 500px;
+.card {
+    background-color: var(--dark-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+.card-title {
+    font-weight: 600;
+}
+
+.form-control {
+    background-color: #333;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.form-control:focus {
+    background-color: #333;
+    color: var(--text-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control::placeholder {
+    color: #888;
+}
+
+.form-label, .form-floating > label {
+    color: #aaa;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    font-weight: 600;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: #555;
+    border-color: #555;
+    font-weight: 600;
+}
+
+.btn-secondary:hover {
+    background-color: #444;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875em;
+    text-align: left;
+    margin-top: 0.25rem;
+    min-height: 1.2em;
+}
+
+/* Admin Dashboard Specific */
+.admin-container {
+    display: flex;
+    gap: 1.5rem;
+    height: calc(100vh - 100px); /* Adjust based on navbar height */
+}
+
+.member-list-panel {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    min-width: 400px;
+}
+
+.member-details-panel {
+    flex: 3;
+    background-color: var(--dark-secondary);
+    border-radius: 0.5rem;
     padding: 2rem;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-.mode-selection-card .btn {
-    padding: 1rem;
-    font-size: 1.2rem;
-    font-weight: bold;
+.member-list-table {
+    cursor: pointer;
+}
+
+.member-list-table tbody tr {
+    transition: background-color 0.15s ease-in-out;
+}
+
+.member-list-table tbody tr:hover, .member-list-table tbody tr.table-active {
+    background-color: var(--primary-color) !important;
+    color: var(--light-color);
+}
+
+.table {
+    --bs-table-bg: var(--dark-secondary);
+    --bs-table-color: var(--text-color);
+    --bs-table-border-color: var(--border-color);
+    --bs-table-hover-bg: #3a3a3a;
+    --bs-table-hover-color: var(--text-color);
+    --bs-table-striped-bg: #2c2c2c;
+}
+
+.details-placeholder {
+    text-align: center;
+    color: #888;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.detail-item h6 {
+    color: #aaa;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+.detail-item p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.interactive-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.interactive-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.nav-tabs .nav-link {
+    background-color: transparent;
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.nav-tabs .nav-link.active {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+    border-color: var(--primary-color);
+}
+
+.icon-lg {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+    color: var(--primary-color);
 }

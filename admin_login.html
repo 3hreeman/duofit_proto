@@ -9,9 +9,10 @@
 </head>
 <body>
     <div class="main-container">
-        <div class="card text-center mode-selection-card">
-            <div class="card-body">
-                <h1 class="card-title mb-4">DuoFit - 관리자</h1>
+        <div class="card text-center" style="max-width: 450px;">
+            <div class="card-body p-5">
+                <h1 class="logo mb-4">DUO<span class="logo-fit">FIT</span></h1>
+                <h4 class="card-title mb-4">관리자 로그인</h4>
                 <form id="admin-login-form">
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="username" placeholder="admin" required>
@@ -21,12 +22,13 @@
                         <input type="password" class="form-control" id="password" placeholder="password" required>
                         <label for="password">비밀번호</label>
                     </div>
+                    <div id="login-error" class="error-message mb-3"></div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-lg">로그인</button>
                     </div>
                 </form>
                 <div class="mt-4">
-                    <a href="index.html">일반 회원 로그인</a>
+                    <a href="index.html">일반 회원 로그인으로 돌아가기</a>
                 </div>
             </div>
         </div>
@@ -38,13 +40,16 @@
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('login-error');
             
             const result = login(username, password, true); // isAdminLogin = true
+
+            errorDiv.textContent = ''; // Clear previous error
 
             if (result.success) {
                 window.location.href = 'admin_dashboard.html';
             } else {
-                alert(result.message);
+                errorDiv.textContent = result.message;
             }
         });
     </script>

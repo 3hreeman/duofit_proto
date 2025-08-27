@@ -8,63 +8,67 @@
     <link href="style.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5 mb-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card">
-                    <div class="card-body p-4">
-                        <h2 class="card-title text-center mb-4">신규 회원가입</h2>
-                        <form id="register-form">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="username" placeholder="아이디" required>
-                                <label for="username">아이디</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="password" placeholder="비밀번호" required>
-                                <label for="password">비밀번호</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="confirm-password" placeholder="비밀번호 확인" required>
-                                <label for="confirm-password">비밀번호 확인</label>
-                            </div>
-                            <hr class="my-4">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="name" placeholder="이름" required>
-                                <label for="name">이름</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="date" class="form-control" id="dob" required>
-                                <label for="dob">생년월일</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="tel" class="form-control" id="phone" placeholder="010-1234-5678" required>
-                                <label for="phone">전화번호</label>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-md">
-                                    <div class="form-floating">
-                                        <select class="form-select" id="gender" required>
-                                            <option value="" selected disabled>선택...</option>
-                                            <option value="male">남성</option>
-                                            <option value="female">여성</option>
-                                            <option value="other">기타</option>
-                                        </select>
-                                        <label for="gender">성별</label>
+    <div class="main-container">
+        <div class="container mt-5 mb-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <h2 class="card-title text-center mb-4">신규 회원가입</h2>
+                            <form id="register-form">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="username" placeholder="아이디" required>
+                                    <label for="username">아이디</label>
+                                    <div id="username-error" class="error-message"></div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control" id="password" placeholder="비밀번호" required>
+                                    <label for="password">비밀번호</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control" id="confirm-password" placeholder="비밀번호 확인" required>
+                                    <label for="confirm-password">비밀번호 확인</label>
+                                    <div id="password-error" class="error-message"></div>
+                                </div>
+                                <hr class="my-4" style="border-color: var(--border-color);">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="name" placeholder="이름" required>
+                                    <label for="name">이름</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="date" class="form-control" id="dob" required>
+                                    <label for="dob">생년월일</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="tel" class="form-control" id="phone" placeholder="010-1234-5678" required>
+                                    <label for="phone">전화번호</label>
+                                </div>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-md">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="gender" required>
+                                                <option value="" selected disabled>선택...</option>
+                                                <option value="male">남성</option>
+                                                <option value="female">여성</option>
+                                                <option value="other">기타</option>
+                                            </select>
+                                            <label for="gender">성별</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" id="age" placeholder="나이" required>
+                                            <label for="age">나이</label>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md">
-                                    <div class="form-floating">
-                                        <input type="number" class="form-control" id="age" placeholder="나이" required>
-                                        <label for="age">나이</label>
-                                    </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">가입하기</button>
                                 </div>
+                            </form>
+                            <div class="text-center mt-3">
+                                <a href="index.html">이미 계정이 있으신가요? 로그인</a>
                             </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">가입하기</button>
-                            </div>
-                        </form>
-                        <div class="text-center mt-3">
-                            <a href="index.html">이미 계정이 있으신가요? 로그인</a>
                         </div>
                     </div>
                 </div>
@@ -74,88 +78,56 @@
 
     <script src="storage.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('register-form');
+        document.getElementById('register-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
             const confirmPasswordInput = document.getElementById('confirm-password');
-            const submitBtn = document.getElementById('submit-btn');
-
+            
             const usernameError = document.getElementById('username-error');
             const passwordError = document.getElementById('password-error');
 
-            let isUsernameValid = false;
-            let isPasswordValid = false;
+            // Clear previous errors
+            usernameError.textContent = '';
+            passwordError.textContent = '';
 
-            function validateForm() {
-                submitBtn.disabled = !isUsernameValid || !isPasswordValid;
+            let isValid = true;
+
+            // 1. Check if username already exists
+            if (checkUsernameExists(usernameInput.value)) {
+                usernameError.textContent = '이미 사용 중인 아이디입니다.';
+                isValid = false;
             }
 
-            usernameInput.addEventListener('blur', () => {
-                const username = usernameInput.value;
-                if (username && checkUsernameExists(username)) {
-                    usernameError.textContent = '이미 사용 중인 아이디입니다.';
-                    usernameError.style.display = 'block';
-                    isUsernameValid = false;
-                } else if (username) {
-                    usernameError.style.display = 'none';
-                    isUsernameValid = true;
-                } else {
-                    isUsernameValid = false;
-                }
-                validateForm();
-            });
+            // 2. Check if passwords match
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                passwordError.textContent = '비밀번호가 일치하지 않습니다.';
+                isValid = false;
+            }
 
-            const validatePasswordMatch = () => {
-                const password = passwordInput.value;
-                const confirmPassword = confirmPasswordInput.value;
-                if (confirmPassword && password !== confirmPassword) {
-                    passwordError.textContent = '비밀번호가 일치하지 않습니다.';
-                    passwordError.style.display = 'block';
-                    isPasswordValid = false;
-                } else if (confirmPassword) {
-                    passwordError.style.display = 'none';
-                    isPasswordValid = true;
-                } else {
-                    isPasswordValid = false;
-                }
-                validateForm();
+            if (!isValid) {
+                return; // Stop submission if validation fails
+            }
+
+            const memberData = {
+                username: usernameInput.value,
+                password: passwordInput.value,
+                name: document.getElementById('name').value,
+                dob: document.getElementById('dob').value,
+                phone: document.getElementById('phone').value,
+                gender: document.getElementById('gender').value,
+                age: parseInt(document.getElementById('age').value, 10)
             };
 
-            passwordInput.addEventListener('input', validatePasswordMatch);
-            confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+            const result = registerMember(memberData);
 
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                if (!isUsernameValid || !isPasswordValid) {
-                    alert('입력 정보를 확인해주세요.');
-                    return;
-                }
-
-                const memberData = {
-                    username: usernameInput.value,
-                    password: passwordInput.value,
-                    name: document.getElementById('name').value,
-                    dob: document.getElementById('dob').value,
-                    phone: document.getElementById('phone').value,
-                    gender: document.getElementById('gender').value,
-                    age: parseInt(document.getElementById('age').value, 10)
-                };
-
-                const result = registerMember(memberData);
-
-                if (result.success) {
-                    alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
-                    window.location.href = 'index.html';
-                } else {
-                    // This case should ideally not be hit if live validation is working
-                    alert(result.message);
-                }
-            });
-
-            // Initially disable the button
-            validateForm();
+            if (result.success) {
+                alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
+                window.location.href = 'index.html';
+            } else {
+                usernameError.textContent = result.message;
+            }
         });
     </script>
 </body>

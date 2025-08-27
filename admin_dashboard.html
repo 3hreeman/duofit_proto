@@ -5,43 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DuoFit - 관리자 대시보드</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">DuoFit [Admin]</a>
-            <button class="btn btn-outline-light" id="logout-btn">로그아웃</button>
+            <a class="logo" href="index.html">DUO<span class="logo-fit">FIT</span></a>
+            <a href="index.html" class="btn btn-secondary btn-sm">로그아웃</a>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 id="admin-name-title">회원 관리</h2>
+    <div class="container-fluid p-4">
+        <!-- Member List View -->
+        <div id="list-view">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">회원 관리 대시보드</h2>
+                <div>
+                    <a href="admin_exercises.html" class="btn btn-info me-2">운동 목록 관리</a>
+                    <button id="member-reset-btn" class="btn btn-danger">사용자 정보 초기화</button>
+                    <button id="exercise-reset-btn" class="btn btn-warning">운동 목록 초기화</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <input type="text" id="search-input" class="form-control mb-3" placeholder="이름 또는 아이디로 회원 검색...">
+                    <div class="table-responsive">
+                        <table class="table table-hover member-list-table">
+                            <thead>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>아이디</th>
+                                    <th>생년월일</th>
+                                </tr>
+                            </thead>
+                            <tbody id="member-list">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="input-group mb-3">
-                    <input type="text" id="search-input" class="form-control" placeholder="이름 또는 아이디로 회원 검색...">
-                    <button class="btn btn-outline-secondary" type="button" id="search-btn">검색</button>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th>이름</th>
-                                <th>아이디</th>
-                                <th>연락처</th>
-                                <th>등록일</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="member-list">
-                            <!-- Member rows will be injected here -->
-                        </tbody>
-                    </table>
-                </div>
+        <!-- Member Details View (Initially Hidden) -->
+        <div id="details-view" class="d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">회원 상세 정보</h2>
+                <button id="back-to-list-btn" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> 목록으로 돌아가기</button>
+            </div>
+            <div id="details-content" class="card">
+                <!-- JS will populate this -->
             </div>
         </div>
     </div>
@@ -49,74 +63,142 @@
     <script src="storage.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const admin = getCurrentUser();
-            if (!admin || !admin.isAdmin) {
-                alert('관리자만 접근할 수 있습니다.');
-                window.location.href = 'admin_login.html';
-                return;
-            }
-
-            document.getElementById('admin-name-title').textContent = `${admin.name}님, 환영합니다.`;
-
-            loadMembers();
-
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                logout();
-                window.location.href = 'index.html';
-            });
-
+            const memberListBody = document.getElementById('member-list');
             const searchInput = document.getElementById('search-input');
-            searchInput.addEventListener('keyup', (e) => {
-                loadMembers(e.target.value);
-            });
-            document.getElementById('search-btn').addEventListener('click', () => {
-                loadMembers(searchInput.value);
-            });
-        });
+            const memberResetBtn = document.getElementById('member-reset-btn');
+            const exerciseResetBtn = document.getElementById('exercise-reset-btn');
+            const backToListBtn = document.getElementById('back-to-list-btn');
+            
+            const listView = document.getElementById('list-view');
+            const detailsView = document.getElementById('details-view');
+            const detailsContent = document.getElementById('details-content');
 
-        function loadMembers(searchTerm = '') {
-            const memberList = document.getElementById('member-list');
-            memberList.innerHTML = '';
-            // Get all members except other admins
-            const members = getMembers().filter(m => !m.isAdmin);
+            function renderMemberDetails(memberId) {
+                const member = getMember(memberId);
+                if (!member) return;
 
-            const lowercasedTerm = searchTerm.toLowerCase();
-            const filteredMembers = members.filter(member => 
-                member.name.toLowerCase().includes(lowercasedTerm) ||
-                member.username.toLowerCase().includes(lowercasedTerm)
-            );
+                let workoutTable = '<p>운동 기록이 없습니다.</p>';
+                if (member.workouts && member.workouts.length > 0) {
+                    workoutTable = `
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr><th>날짜</th><th>운동 이름</th><th>부위</th><th>강도</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${member.workouts.map(w => `
+                                        <tr>
+                                            <td>${w.date}</td>
+                                            <td>${w.name}</td>
+                                            <td>${w.part}</td>
+                                            <td>${w.weight}kg / ${w.reps}회 / ${w.sets}세트</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
 
-            if (filteredMembers.length === 0) {
-                memberList.innerHTML = '<tr><td colspan="5" class="text-center">해당하는 회원이 없습니다.</td></tr>';
-                return;
-            }
-
-            filteredMembers.forEach(member => {
-                const row = memberList.insertRow();
-                row.innerHTML = `
-                    <td>${member.name}</td>
-                    <td>${member.username}</td>
-                    <td>${member.phone}</td>
-                    <td>${member.dob}</td> <!-- Using DoB as registration date for this example -->
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-primary" onclick="viewDetails('${member.id}')">상세보기</button>
-                        <button class="btn btn-sm btn-danger" onclick="removeMember('${member.id}')">삭제</button>
-                    </td>
+                detailsContent.innerHTML = `
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <h4 class="mb-4 text-primary">${member.name}님의 프로필</h4>
+                                <div class="details-grid">
+                                    <div class="detail-item"><h6>아이디</h6><p>${member.username}</p></div>
+                                    <div class="detail-item"><h6>나이</h6><p>${member.age}</p></div>
+                                    <div class="detail-item"><h6>성별</h6><p>${member.gender}</p></div>
+                                    <div class="detail-item"><h6>생년월일</h6><p>${member.dob}</p></div>
+                                    <div class="detail-item"><h6>전화번호</h6><p>${member.phone}</p></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-7">
+                                <h4 class="mb-4 text-primary">운동 기록</h4>
+                                ${workoutTable}
+                            </div>
+                        </div>
+                    </div>
                 `;
-            });
-        }
-
-        function viewDetails(id) {
-            window.location.href = `admin_member_details.html?id=${id}`;
-        }
-
-        function removeMember(id) {
-            const member = getMember(id);
-            if (confirm(`정말로 '${member.name}' 회원을 삭제하시겠습니까?`)) {
-                deleteMember(id);
-                loadMembers(document.getElementById('search-input').value);
             }
-        }
+
+            function switchToDetailsView(memberId) {
+                renderMemberDetails(memberId);
+                listView.classList.add('d-none');
+                detailsView.classList.remove('d-none');
+            }
+
+            function switchToListView() {
+                detailsView.classList.add('d-none');
+                listView.classList.remove('d-none');
+                // Deselect active row
+                const activeRow = document.querySelector('#member-list tr.table-active');
+                if (activeRow) {
+                    activeRow.classList.remove('table-active');
+                }
+            }
+
+            function renderMembers(filter = '') {
+                memberListBody.innerHTML = '';
+                const members = getMembers();
+                const filteredMembers = members.filter(m => {
+                    const searchTerm = filter.toLowerCase();
+                    return !m.isAdmin && (m.name.toLowerCase().includes(searchTerm) || m.username.toLowerCase().includes(searchTerm));
+                });
+
+                if (filteredMembers.length === 0) {
+                    memberListBody.innerHTML = '<tr><td colspan="3" class="text-center">표시할 회원이 없습니다.</td></tr>';
+                    return;
+                }
+
+                filteredMembers.forEach(member => {
+                    const row = document.createElement('tr');
+                    row.dataset.id = member.id;
+                    row.innerHTML = `
+                        <td>${member.name}</td>
+                        <td>${member.username}</td>
+                        <td>${member.dob}</td>
+                    `;
+                    memberListBody.appendChild(row);
+                });
+            }
+
+            memberListBody.addEventListener('click', (e) => {
+                const row = e.target.closest('tr');
+                if (!row || !row.dataset.id) return;
+
+                // Highlight active row
+                document.querySelectorAll('#member-list tr').forEach(r => r.classList.remove('table-active'));
+                row.classList.add('table-active');
+                
+                switchToDetailsView(row.dataset.id);
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                renderMembers(e.target.value);
+            });
+
+            memberResetBtn.addEventListener('click', () => {
+                if (confirm('정말로 모든 사용자 정보(관리자 포함)를 삭제하고 초기 상태로 되돌리시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                    initializeMemberData();
+                    alert('사용자 정보가 초기화되었습니다.');
+                    renderMembers();
+                    switchToListView();
+                }
+            });
+
+            exerciseResetBtn.addEventListener('click', () => {
+                if (confirm('정말로 모든 운동 목록을 삭제하고 기본값으로 되돌리시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                    initializeExerciseData();
+                    alert('운동 목록이 초기화되었습니다.');
+                }
+            });
+
+            backToListBtn.addEventListener('click', switchToListView);
+
+            // Initial render
+            renderMembers();
+        });
     </script>
 </body>
 </html>
