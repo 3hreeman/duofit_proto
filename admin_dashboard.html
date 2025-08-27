@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoFit - 관리자 대시보드</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">DuoFit [Admin]</a>
+            <button class="btn btn-outline-light" id="logout-btn">로그아웃</button>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 id="admin-name-title">회원 관리</h2>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <input type="text" id="search-input" class="form-control" placeholder="이름 또는 아이디로 회원 검색...">
+                    <button class="btn btn-outline-secondary" type="button" id="search-btn">검색</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>이름</th>
+                                <th>아이디</th>
+                                <th>연락처</th>
+                                <th>등록일</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="member-list">
+                            <!-- Member rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="storage.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const admin = getCurrentUser();
+            if (!admin || !admin.isAdmin) {
+                alert('관리자만 접근할 수 있습니다.');
+                window.location.href = 'admin_login.html';
+                return;
+            }
+
+            document.getElementById('admin-name-title').textContent = `${admin.name}님, 환영합니다.`;
+
+            loadMembers();
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                logout();
+                window.location.href = 'index.html';
+            });
+
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('keyup', (e) => {
+                loadMembers(e.target.value);
+            });
+            document.getElementById('search-btn').addEventListener('click', () => {
+                loadMembers(searchInput.value);
+            });
+        });
+
+        function loadMembers(searchTerm = '') {
+            const memberList = document.getElementById('member-list');
+            memberList.innerHTML = '';
+            // Get all members except other admins
+            const members = getMembers().filter(m => !m.isAdmin);
+
+            const lowercasedTerm = searchTerm.toLowerCase();
+            const filteredMembers = members.filter(member => 
+                member.name.toLowerCase().includes(lowercasedTerm) ||
+                member.username.toLowerCase().includes(lowercasedTerm)
+            );
+
+            if (filteredMembers.length === 0) {
+                memberList.innerHTML = '<tr><td colspan="5" class="text-center">해당하는 회원이 없습니다.</td></tr>';
+                return;
+            }
+
+            filteredMembers.forEach(member => {
+                const row = memberList.insertRow();
+                row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${member.username}</td>
+                    <td>${member.phone}</td>
+                    <td>${member.dob}</td> <!-- Using DoB as registration date for this example -->
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-primary" onclick="viewDetails('${member.id}')">상세보기</button>
+                        <button class="btn btn-sm btn-danger" onclick="removeMember('${member.id}')">삭제</button>
+                    </td>
+                `;
+            });
+        }
+
+        function viewDetails(id) {
+            window.location.href = `admin_member_details.html?id=${id}`;
+        }
+
+        function removeMember(id) {
+            const member = getMember(id);
+            if (confirm(`정말로 '${member.name}' 회원을 삭제하시겠습니까?`)) {
+                deleteMember(id);
+                loadMembers(document.getElementById('search-input').value);
+            }
+        }
+    </script>
+</body>
+</html>
