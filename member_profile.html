@@ -72,10 +72,14 @@
         </div>
     </div>
 
-    <script src="storage.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentUser = getCurrentUser();
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" type="module"></script>
+    <script src="firestore.js" type="module"></script>
+    <script type="module">
+        import { getCurrentUser, updateMember, logout } from './firestore.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const currentUser = await getCurrentUser();
             if (!currentUser) {
                 alert('로그인이 필요합니다.');
                 window.location.href = 'index.html';
@@ -90,7 +94,7 @@
             document.getElementById('gender').value = currentUser.gender;
             document.getElementById('age').value = currentUser.age;
 
-            document.getElementById('profile-form').addEventListener('submit', (e) => {
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 const updatedData = {
@@ -103,7 +107,7 @@
                     age: parseInt(document.getElementById('age').value, 10)
                 };
 
-                const result = updateMember(updatedData);
+                const result = await updateMember(updatedData);
                 if(result.success) {
                     alert('프로필이 성공적으로 업데이트되었습니다.');
                     window.location.href = 'member_dashboard.html';

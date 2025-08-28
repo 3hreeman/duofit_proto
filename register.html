@@ -76,9 +76,13 @@
         </div>
     </div>
 
-    <script src="storage.js"></script>
-    <script>
-        document.getElementById('register-form').addEventListener('submit', (e) => {
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" type="module"></script>
+    <script src="firestore.js" type="module"></script>
+    <script type="module">
+        import { checkUsernameExists, registerMember } from './firestore.js';
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const usernameInput = document.getElementById('username');
@@ -95,7 +99,7 @@
             let isValid = true;
 
             // 1. Check if username already exists
-            if (checkUsernameExists(usernameInput.value)) {
+            if (await checkUsernameExists(usernameInput.value)) {
                 usernameError.textContent = '이미 사용 중인 아이디입니다.';
                 isValid = false;
             }
@@ -120,7 +124,7 @@
                 age: parseInt(document.getElementById('age').value, 10)
             };
 
-            const result = registerMember(memberData);
+            const result = await registerMember(memberData);
 
             if (result.success) {
                 alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');

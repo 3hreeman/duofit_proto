@@ -117,10 +117,14 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="storage.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentUser = getCurrentUser();
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" type="module"></script>
+    <script src="firestore.js" type="module"></script>
+    <script type="module">
+        import { getCurrentUser, getExercises, getExerciseParts, addWorkout, deleteWorkout, logout } from './firestore.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const currentUser = await getCurrentUser();
             if (!currentUser) {
                 alert('로그인이 필요합니다.');
                 window.location.href = 'index.html';
@@ -128,8 +132,8 @@
             }
 
             const addWorkoutModal = new bootstrap.Modal(document.getElementById('addWorkoutModal'));
-            const exercises = getExercises();
-            const exerciseParts = getExerciseParts();
+            const exercises = await getExercises();
+            const exerciseParts = await getExerciseParts();
             let volumeChart, partChart;
 
             // Populate filter and modal dropdowns
@@ -250,9 +254,9 @@
             }
 
             // Event Listeners
-            document.getElementById('add-workout-form').addEventListener('submit', e => {
+            document.getElementById('add-workout-form').addEventListener('submit', async e => {
                 e.preventDefault();
-                addWorkout(currentUser.id, {
+                await addWorkout(currentUser.id, {
                     date: document.getElementById('workout-date').value,
                     exerciseId: document.getElementById('workout-name-select').value,
                     weight: parseFloat(document.getElementById('workout-weight').value),
@@ -263,10 +267,10 @@
                 location.reload(); // Reload to reflect new data everywhere
             });
 
-            document.getElementById('workout-list').addEventListener('click', e => {
+            document.getElementById('workout-list').addEventListener('click', async e => {
                 const deleteBtn = e.target.closest('.delete-workout-btn');
                 if (deleteBtn && confirm('이 운동 기록을 삭제하시겠습니까?')) {
-                    deleteWorkout(currentUser.id, deleteBtn.dataset.id);
+                    await deleteWorkout(currentUser.id, deleteBtn.dataset.id);
                     location.reload();
                 }
             });

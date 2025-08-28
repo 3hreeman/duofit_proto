@@ -104,10 +104,11 @@
         </tbody>
     </table>
 
-    <!-- Make this a module to use import/export -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" type="module"></script>
     <script type="module">
         // Import the new Firestore-based functions
-        import { loadUsers, saveUser, removeUser } from './storage.js?v=2';
+        import { loadUsers, saveUser, removeUser } from './firestore.js';
 
         const userForm = document.getElementById('userForm');
         const userIdField = document.getElementById('userId');

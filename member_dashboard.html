@@ -49,10 +49,14 @@
         </div>
     </div>
 
-    <script src="storage.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentUser = getCurrentUser();
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" type="module"></script>
+    <script src="firestore.js" type="module"></script>
+    <script type="module">
+        import { getCurrentUser, logout } from './firestore.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const currentUser = await getCurrentUser();
             if (!currentUser) {
                 alert('로그인이 필요합니다.');
                 window.location.href = 'index.html';

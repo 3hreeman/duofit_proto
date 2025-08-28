@@ -60,8 +60,12 @@
         </div>
     </div>
 
-    <script src="storage.js"></script>
-    <script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" type="module"></script>
+    <script src="firestore.js" type="module"></script>
+    <script type="module">
+        import { getMembers, getMember, initializeMemberData, initializeExerciseData } from './firestore.js';
+
         document.addEventListener('DOMContentLoaded', () => {
             const memberListBody = document.getElementById('member-list');
             const searchInput = document.getElementById('search-input');
@@ -73,8 +77,8 @@
             const detailsView = document.getElementById('details-view');
             const detailsContent = document.getElementById('details-content');
 
-            function renderMemberDetails(memberId) {
-                const member = getMember(memberId);
+            async function renderMemberDetails(memberId) {
+                const member = await getMember(memberId);
                 if (!member) return;
 
                 let workoutTable = '<p>운동 기록이 없습니다.</p>';
@@ -122,8 +126,8 @@
                 `;
             }
 
-            function switchToDetailsView(memberId) {
-                renderMemberDetails(memberId);
+            async function switchToDetailsView(memberId) {
+                await renderMemberDetails(memberId);
                 listView.classList.add('d-none');
                 detailsView.classList.remove('d-none');
             }
@@ -138,9 +142,9 @@
                 }
             }
 
-            function renderMembers(filter = '') {
+            async function renderMembers(filter = '') {
                 memberListBody.innerHTML = '';
-                const members = getMembers();
+                const members = await getMembers();
                 const filteredMembers = members.filter(m => {
                     const searchTerm = filter.toLowerCase();
                     return !m.isAdmin && (m.name.toLowerCase().includes(searchTerm) || m.username.toLowerCase().includes(searchTerm));
@@ -163,7 +167,7 @@
                 });
             }
 
-            memberListBody.addEventListener('click', (e) => {
+            memberListBody.addEventListener('click', async (e) => {
                 const row = e.target.closest('tr');
                 if (!row || !row.dataset.id) return;
 
@@ -171,25 +175,25 @@
                 document.querySelectorAll('#member-list tr').forEach(r => r.classList.remove('table-active'));
                 row.classList.add('table-active');
                 
-                switchToDetailsView(row.dataset.id);
+                await switchToDetailsView(row.dataset.id);
             });
 
             searchInput.addEventListener('input', (e) => {
                 renderMembers(e.target.value);
             });
 
-            memberResetBtn.addEventListener('click', () => {
+            memberResetBtn.addEventListener('click', async () => {
                 if (confirm('정말로 모든 사용자 정보(관리자 포함)를 삭제하고 초기 상태로 되돌리시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-                    initializeMemberData();
+                    await initializeMemberData();
                     alert('사용자 정보가 초기화되었습니다.');
-                    renderMembers();
+                    await renderMembers();
                     switchToListView();
                 }
             });
 
-            exerciseResetBtn.addEventListener('click', () => {
+            exerciseResetBtn.addEventListener('click', async () => {
                 if (confirm('정말로 모든 운동 목록을 삭제하고 기본값으로 되돌리시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-                    initializeExerciseData();
+                    await initializeExerciseData();
                     alert('운동 목록이 초기화되었습니다.');
                 }
             });

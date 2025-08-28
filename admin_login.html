@@ -34,15 +34,19 @@
         </div>
     </div>
 
-    <script src="storage.js"></script>
-    <script>
-        document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" type="module"></script>
+    <script src="firestore.js" type="module"></script>
+    <script type="module">
+        import { login } from './firestore.js';
+
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('login-error');
             
-            const result = login(username, password, true); // isAdminLogin = true
+            const result = await login(username, password, true); // isAdminLogin = true
 
             errorDiv.textContent = ''; // Clear previous error
 
